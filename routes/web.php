@@ -14,12 +14,12 @@ Route::get('/', [DonasiController::class, 'index']);
 Route::get('/selengkapnya', [DonasiController::class, 'Selengkapnya']);
 Route::get('/tentang-kami', [DonasiController::class, 'TentangKami']);
 Route::get('/category/{id}', [DonasiController::class, 'CategoryDonasi']);
-Route::get('/profile', [DonasiController::class, 'ProfileDonasi']);
+Route::get('/profile', [DonasiController::class, 'ProfileDonasi'])->middleware('auth');
 
 // Donasi
 Route::get('/donasi/detail/{slug}', [DonasiController::class, 'DetailDonasi']);
 Route::get('donasi/payment/{id}', [DonasiController::class, 'DetailPayment']);
-Route::get('donasi/history', [DonasiController::class, 'HistoryDonasi']);
+Route::get('donasi/history', [DonasiController::class, 'HistoryDonasi'])->middleware('auth');
 Route::post('donasi/payment', [TransaksiController::class, 'berDonasi']);
 Route::post('/donasi/payment/callback', [TransaksiController::class, 'handleCallback']);
 

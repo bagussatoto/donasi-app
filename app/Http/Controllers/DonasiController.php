@@ -141,7 +141,14 @@ class DonasiController extends Controller
 
     public function DetailPayment($id)
     {
-        $transaction = Transaksi::with('donation')->with('user')->find($id);
+        $transaction = Transaksi::with('donation')->with('user')->findOrFail($id);
+
+        // Donasi milik user terdaftar hanya boleh dilihat oleh pemiliknya
+        $ownerId = optional($transaction->donation)->user_id;
+        if ($ownerId && (!Auth::check() || Auth::user()->user_id !== $ownerId)) {
+            abort(403);
+        }
+
         if ($transaction->status == 'completed') {
             return view('Pages.Feedback', compact('transaction'));
         }

@@ -25,6 +25,7 @@ Platform penggalangan dana dan donasi online berbasis web yang memudahkan masyar
 - [Panduan Instalasi](#panduan-instalasi)
 - [Konfigurasi Midtrans](#konfigurasi-midtrans)
 - [Struktur Direktori](#struktur-direktori)
+- [Pembuat](#pembuat)
 - [Lisensi](#lisensi)
 
 ---
@@ -216,6 +217,20 @@ donasi/
 └── routes/
     └── web.php               # Definisi rute publik, donasi, autentikasi, dan panel admin
 ```
+
+---
+
+## Pembuat
+
+<div align="center">
+
+**Bagus Budi Satoto**
+
+*Web Developer*
+
+[![GitHub](https://img.shields.io/badge/GitHub-bagussatoto-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/bagussatoto)
+
+</div>
 
 ---
 

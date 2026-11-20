@@ -20,9 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \Fahlisaputra\Minify\Middleware\MinifyJavascript::class,
         ]);
         $middleware->validateCsrfTokens(except: [
-            'donasi*',
-            // '/donasi/payment/callback', // <-- exclude this route
-           
+            'donasi/payment/callback', // webhook Midtrans (diverifikasi via signature_key)
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

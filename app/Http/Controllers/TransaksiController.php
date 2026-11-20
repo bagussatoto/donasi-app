@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Midtrans\Config as MidtransConf;
 
-use function Pest\Laravel\json;
+use Illuminate\Support\Str;
 
 class TransaksiController extends Controller
 {
@@ -29,7 +29,7 @@ class TransaksiController extends Controller
         $validatedData = $request->validate([
             'campaign_id' => 'required|exists:campaigns,campaign_id',
             'message' => 'nullable|string|max:200',
-            'amount' => 'required|numeric',
+            'amount' => 'required|numeric|min:1000',
             'show_name' => 'nullable|string|in:on,off',
         ]);
 
@@ -42,7 +42,7 @@ class TransaksiController extends Controller
         $donation = Donasi::create($validatedData);
         $transaksi = Transaksi::create([
             'donation_id' => $donation->donation_id,
-            'midtrans_order_id' => 'ORD-' . random_int(10000, 99999),
+            'midtrans_order_id' => 'ORD-' . Str::uuid(),
             'gross_amount' => $donation->amount,
         ]);
 
@@ -99,6 +99,16 @@ class TransaksiController extends Controller
 
         if (!$transaction) {
             return response()->json(['message' => 'Order not found'], 404);
+        }
+
+        // Abaikan notifikasi untuk transaksi yang sudah final (mencegah penimpaan status)
+        if ($transaction->status === 'completed') {
+            return response()->json(['message' => 'Transaction already completed']);
+        }
+
+        // Pastikan nominal notifikasi sesuai dengan transaksi
+        if ((int) round((float) $request->gross_amount) !== (int) $transaction->gross_amount) {
+            return response()->json(['message' => 'Amount mismatch'], 400);
         }
 
         // Temukan donasi yang terkait dengan transaksi
