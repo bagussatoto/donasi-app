@@ -94,9 +94,13 @@ class DonasiController extends Controller
     {
         $transaction = Transaksi::with('donation')->with('user')->findOrFail($id);
 
-        // Donasi milik user terdaftar hanya boleh dilihat oleh pemiliknya
+        // Donasi milik user terdaftar hanya boleh dilihat pemiliknya; donasi tamu harus cocok dengan session
         $ownerId = optional($transaction->donation)->user_id;
-        if ($ownerId && (!Auth::check() || Auth::user()->user_id !== $ownerId)) {
+        if ($ownerId) {
+            if (!Auth::check() || Auth::user()->user_id !== $ownerId) {
+                abort(403);
+            }
+        } elseif (!in_array($transaction->transaction_id, session('guest_transactions', []), true)) {
             abort(403);
         }
 

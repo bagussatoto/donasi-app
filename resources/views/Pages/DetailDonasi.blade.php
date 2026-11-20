@@ -3,6 +3,18 @@
 <meta property="og:image" content="{{ $campaign->image_url }}" />
 @endpush
 @section('content')
+    @if (session('error') || $errors->any())
+        <div class="mt-4 px-4 lg:px-0">
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded" role="alert">
+                @if (session('error'))
+                    <p>{{ session('error') }}</p>
+                @endif
+                @foreach ($errors->all() as $error)
+                    <p>{{ $error }}</p>
+                @endforeach
+            </div>
+        </div>
+    @endif
     <h1 class="font-bold text-xl mt-10 p-4 lg:flex hidden">{{ $campaign->title }}</h1>
     <div class="flex gap-10 mt-5 ">
         <div class="w-full lg:w-8/12 px-4 lg:px-0">
@@ -51,7 +63,7 @@
                     <div class="text-sm">
                         <h1>Rp {{ number_format($data->amount, 0, ',', '.') }}</h1>
                         <h1 class="text-gray-500">
-                            Oleh : {{  $data->show_name == 0 ? 'Anonim' : $data->user->name ?? 'Anonim' }} .
+                            Oleh : {{ $data->show_name == 0 ? 'Anonim' : $data->user?->name ?? 'Anonim' }} .
                             {{ number_format($data->days_ago, 0, ',', '.') == 0 ? 'Hari ini' : number_format($data->days_ago, 0, ',', '.') . ' Hari Yang Lalu' }}
                         </h1>
 
@@ -76,7 +88,7 @@
                                 <h1 class="font-semibold lg:text-sm text-xs"> {{ $item->title }}
                                 </h1>
                                 <h1 class="mt-3 text-xs"> {{ $item->created_at }}</h1>
-                                <h1 class="text-xs lg:mt-4 mt-2">Data Terkumpul</h1>
+                                <h1 class="text-xs lg:mt-4 mt-2">Dana Terkumpul</h1>
                                 <progress class="progress progress-info w-full" value="{{ $item->progress }}"
                                     max="100"></progress>
                                 <h1 class="text-sm">Rp {{ number_format($item->collected_amount, 0, ',', '.') }}</h1>
@@ -108,7 +120,7 @@
                     <div class="text-sm">
                         <h1>Rp {{ number_format($datadonatur->amount, 0, ',', '.') }}</h1>
                         <h1 class="text-gray-500">
-                            Oleh: {{ $datadonatur->show_name == 0 ? 'Anonim' : $datadonatur->user->name ?? 'Anonim' }}
+                            Oleh: {{ $datadonatur->show_name == 0 ? 'Anonim' : $datadonatur->user?->name ?? 'Anonim' }}
                             {{-- Oleh : {{ $datadonatur->user->name ?? 'Anonimus' }} . --}}
                             {{ number_format($datadonatur->days_ago, 0, ',', '.') == 0 ? 'Hari ini' : number_format($datadonatur->days_ago, 0, ',', '.') . ' Hari Yang Lalu' }}
                         </h1>

@@ -3,6 +3,7 @@
 use App\Models\Campaign;
 use App\Models\Donasi;
 use App\Models\Transaksi;
+use App\Models\User;
 
 function makeCampaign(array $overrides = []): Campaign
 {
@@ -16,9 +17,10 @@ function makeCampaign(array $overrides = []): Campaign
     ], $overrides));
 }
 
-function makePendingTransaction(Campaign $campaign, int $amount = 50000): Transaksi
+function makePendingTransaction(Campaign $campaign, int $amount = 50000, ?string $userId = null): Transaksi
 {
     $donation = Donasi::create([
+        'user_id' => $userId,
         'campaign_id' => $campaign->campaign_id,
         'amount' => $amount,
         'show_name' => 1,
@@ -113,4 +115,50 @@ it('ignores callbacks for already completed transactions', function () {
     $this->postJson('/donasi/payment/callback', callbackPayload($transaksi, '50000.00', 'expire'))->assertOk();
 
     expect($transaksi->fresh()->status)->toBe('completed');
+});
+
+it('marks completed transaction failed and recalculates collected amount on refund', function () {
+    $campaign = makeCampaign(['collected_amount' => 50000]);
+    $transaksi = makePendingTransaction($campaign, 50000);
+    $transaksi->update(['status' => 'completed']);
+    $transaksi->donation->update(['status' => 'completed']);
+
+    $this->postJson('/donasi/payment/callback', callbackPayload($transaksi, '50000.00', 'refund'))->assertOk();
+
+    expect($transaksi->fresh()->status)->toBe('failed');
+    expect($transaksi->donation->fresh()->status)->toBe('failed');
+    expect((int) $campaign->fresh()->collected_amount)->toBe(0);
+});
+
+it('marks completed transaction failed and recalculates collected amount on chargeback', function () {
+    $campaign = makeCampaign(['collected_amount' => 50000]);
+    $transaksi = makePendingTransaction($campaign, 50000);
+    $transaksi->update(['status' => 'completed']);
+    $transaksi->donation->update(['status' => 'completed']);
+
+    $this->postJson('/donasi/payment/callback', callbackPayload($transaksi, '50000.00', 'chargeback'))->assertOk();
+
+    expect($transaksi->fresh()->status)->toBe('failed');
+    expect($transaksi->donation->fresh()->status)->toBe('failed');
+    expect((int) $campaign->fresh()->collected_amount)->toBe(0);
+});
+
+it('restricts guest payment details to matching session', function () {
+    $transaksi = makePendingTransaction(makeCampaign(), 50000);
+
+    $this->get('/donasi/payment/' . $transaksi->transaction_id)->assertStatus(403);
+
+    $this->withSession(['guest_transactions' => [$transaksi->transaction_id]])
+        ->get('/donasi/payment/' . $transaksi->transaction_id)
+        ->assertOk();
+});
+
+it('restricts registered user payment details to the owner', function () {
+    $owner = User::factory()->create();
+    $otherUser = User::factory()->create();
+    $transaksi = makePendingTransaction(makeCampaign(), 50000, $owner->user_id);
+
+    $this->get('/donasi/payment/' . $transaksi->transaction_id)->assertStatus(403);
+    $this->actingAs($otherUser)->get('/donasi/payment/' . $transaksi->transaction_id)->assertStatus(403);
+    $this->actingAs($owner)->get('/donasi/payment/' . $transaksi->transaction_id)->assertOk();
 });

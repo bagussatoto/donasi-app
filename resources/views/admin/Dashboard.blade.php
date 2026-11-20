@@ -67,7 +67,7 @@
         </div>
     </div>
     @push('js')
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
         <script>
             fetch('/admin/statistics')
                 .then(response => response.json())

@@ -11,6 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class User extends Authenticatable
 {
     protected $primaryKey = 'user_id';
+    public $incrementing = false;
     protected $keyType = 'string';
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -24,6 +25,7 @@ class User extends Authenticatable
         'user_id',
         'name',
         'email',
+        'phone',
         'password',
         'role',
     ];

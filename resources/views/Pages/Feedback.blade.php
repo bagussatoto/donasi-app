@@ -8,7 +8,7 @@
         <img src="{{ asset('image/logo.png') }}" alt="" class="w-40 h-40 mt-7">
         <h1 class="mt-4 font-bold text-xl mb-3 text-center"> Terima Kasih Sudah Berdonasi !</h1>
         <h1 class="text-center"> Kebaikan hati Anda adalah cahaya harapan bagi  mereka  <br> yang membutuhkannya.</h1>
-        <a href="" class="btn bg-primaryy text-white mt-5 rounded-full px-7"> Donasiku</a>
+        <a href="{{ Auth::check() ? url('donasi/history') : url('/') }}" class="btn bg-primaryy text-white mt-5 rounded-full px-7"> {{ Auth::check() ? 'Donasiku' : 'Kembali ke Beranda' }}</a>
     </div>
 </div>
 

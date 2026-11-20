@@ -26,20 +26,25 @@ class AuthController extends Controller
             [
                 'name' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'email', 'unique:users,email'],
-                'password' => ['required', 'string', 'min:8'],
+                'phone' => ['nullable', 'string', 'max:20', 'regex:/^[0-9+\-\s]+$/'],
+                'password' => ['required', 'string', 'min:8', 'confirmed'],
             ],
             [
                 'name.required' => 'Nama wajib diisi.',
                 'email.required' => 'Email wajib diisi.',
                 'email.unique' => 'Email sudah terdaftar.',
+                'phone.max' => 'Nomor telepon maksimal 20 karakter.',
+                'phone.regex' => 'Format nomor telepon tidak valid.',
                 'password.required' => 'Password wajib diisi.',
                 'password.min' => 'Password harus terdiri dari minimal 8 karakter.',
+                'password.confirmed' => 'Konfirmasi password tidak cocok.',
             ]
         );
         
         $user = User::create([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
+            'phone' => $validatedData['phone'] ?? null,
             'password' => Hash::make($validatedData['password']),
         ]);
 
@@ -49,7 +54,6 @@ class AuthController extends Controller
     {
         $credentials = $request->validate(
             [
-                // 'username' => ['required','regex:/^\S*$/'],
                 'email' => ['required', 'email'],
                 'password' => ['required']
             ],
@@ -58,8 +62,6 @@ class AuthController extends Controller
                 'password.required' => 'Password wajib diisi.'
             ]
         );
-        // $credentials = $request->only('username', 'password');
-        // $remember_me = $request->has('remember') ? true : false; 
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();

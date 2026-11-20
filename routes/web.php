@@ -8,7 +8,6 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\UsermanController;
-use App\Models\Transaksi;
 
 Route::get('/', [DonasiController::class, 'index']);
 Route::get('/selengkapnya', [DonasiController::class, 'Selengkapnya']);

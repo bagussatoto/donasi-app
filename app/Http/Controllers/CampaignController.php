@@ -61,18 +61,11 @@ class CampaignController extends Controller
      */
     public function show(string $id)
     {
-        $campaign = Campaign::with('category')->find($id);
-        $campaign = Campaign::where('campaign_id', $id)->firstOrFail();
-
-        $campaign->start_date = Carbon::parse($campaign->start_date);
-        $campaign->end_date = Carbon::parse($campaign->end_date);
-
-        $campaign->days_remaining = max(0, (int) now()->startOfDay()->diffInDays($campaign->end_date, false));
-        $campaign->progress = $campaign->target_amount > 0
-            ? ($campaign->collected_amount / $campaign->target_amount) * 100
-            : 0;
-        $campaign->total_donations = Donasi::where('campaign_id', $campaign->campaign_id)
-            ->where('status', 'completed')->count();
+        $campaign = Campaign::with('category')
+            ->withTotalDonations()
+            ->where('campaign_id', $id)
+            ->firstOrFail()
+            ->decorate();
 
         $donatur = $campaign->donatur = Donasi::where('campaign_id', $campaign->campaign_id)
             ->where('status', 'completed')

@@ -37,25 +37,42 @@
 
             <div class="mb-4">
                 <label for="email" class="block text-gray-700 font-medium mb-2">Email</label>
-                <input type="email" id="email" name="email"
+                <input type="email" id="email" name="email" value="{{ old('email') }}"
                     class="w-full border-2 border-gray-300 rounded-3xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primaryy bg-white"
                     required>
             </div>
             <div class="mb-4">
-                <label for="email" class="block text-gray-700 font-medium mb-2">Nama Lengkap</label>
-                <input type="text" id="name" name="name"
+                <label for="name" class="block text-gray-700 font-medium mb-2">Nama Lengkap</label>
+                <input type="text" id="name" name="name" value="{{ old('name') }}"
                     class="w-full border-2 border-gray-300 rounded-3xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primaryy bg-white"
                     required>
             </div>
 
-            <div class="mb-6 relative">
+            <div class="mb-4">
+                <label for="phone" class="block text-gray-700 font-medium mb-2">Nomor Telepon (Opsional)</label>
+                <input type="tel" id="phone" name="phone" value="{{ old('phone') }}"
+                    class="w-full border-2 border-gray-300 rounded-3xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primaryy bg-white">
+            </div>
+
+            <div class="mb-4 relative">
                 <label for="password" class="block text-gray-700 font-medium mb-2">Password</label>
                 <input type="password" id="password" name="password"
                     class="w-full border-2 border-gray-300 rounded-3xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primaryy bg-white"
                     required>
-                <button type="button" onclick="togglePassword()"
+                <button type="button" onclick="togglePassword('password', 'eye-icon')"
                     class="absolute inset-y-0 right-4 flex items-center top-8">
                     <i class="fa-solid fa-eye text-xl" id="eye-icon"></i>
+                </button>
+            </div>
+
+            <div class="mb-6 relative">
+                <label for="password_confirmation" class="block text-gray-700 font-medium mb-2">Konfirmasi Password</label>
+                <input type="password" id="password_confirmation" name="password_confirmation"
+                    class="w-full border-2 border-gray-300 rounded-3xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primaryy bg-white"
+                    required>
+                <button type="button" onclick="togglePassword('password_confirmation', 'eye-icon-confirm')"
+                    class="absolute inset-y-0 right-4 flex items-center top-8">
+                    <i class="fa-solid fa-eye text-xl" id="eye-icon-confirm"></i>
                 </button>
             </div>
 
@@ -71,9 +88,9 @@
     </div>
 
     <script>
-        function togglePassword() {
-            const passwordInput = document.getElementById('password');
-            const eyeIcon = document.getElementById('eye-icon');
+        function togglePassword(inputId, iconId) {
+            const passwordInput = document.getElementById(inputId);
+            const eyeIcon = document.getElementById(iconId);
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
                 eyeIcon.classList.remove('fa-eye');

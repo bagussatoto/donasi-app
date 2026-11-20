@@ -1,11 +1,13 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "bagussatoto/donasi-app",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "Ayo Donasi - Platform penggalangan dana dan donasi online berbasis Laravel 11 dengan integrasi Midtrans.",
     "keywords": [
         "laravel",
-        "framework"
+        "donasi",
+        "crowdfunding",
+        "midtrans"
     ],
     "license": "MIT",
     "require": {

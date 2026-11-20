@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @push('js')
-    <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js"
+    <script type="text/javascript" src="{{ config('midtrans.is_production') ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js' }}"
         data-client-key="{{ config('midtrans.client_key') }}"></script>
     <script type="text/javascript">
         var payButton = document.getElementById('pay-button');
@@ -47,13 +47,13 @@
                         <th class="pr-4">Nama Donatur</th>
                         <td class="pr-4">:</td>
                         <td>
-                            {{ $transaction->donation->show_name == 0 ? 'Anonim' : $transaction->user->name ?? 'Anonim'  }}
+                            {{ $transaction->donation->show_name == 0 ? 'Anonim' : $transaction->user?->name ?? 'Anonim' }}
                         </td>
                     </tr>
                     <tr>
                         <th class="pr-4">Nominal</th>
                         <td class="pr-4">:</td>
-                        <td>{{ $transaction->gross_amount }}</td>
+                        <td>Rp {{ number_format($transaction->gross_amount, 0, ',', '.') }}</td>
                     </tr>
                     <tr>
                         <th class="pr-4">Pesan</th>

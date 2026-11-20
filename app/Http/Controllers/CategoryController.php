@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
@@ -13,7 +14,7 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = Category::all();
-        return view('admin.category.index', compact('categories') );
+        return view('admin.category.index', compact('categories'));
     }
 
     /**
@@ -34,9 +35,9 @@ class CategoryController extends Controller
             'description' => 'required',
             'icon' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-    
+
         $iconPath = $request->file('icon')->store('icons', 'public');
-    
+
         Category::create([
             'name' => $validatedData['name'],
             'description' => $validatedData['description'],
@@ -59,7 +60,7 @@ class CategoryController extends Controller
     public function edit(string $id)
     {
         $category = Category::findOrFail($id);
-        return view('admin.category.edit', compact('category') );
+        return view('admin.category.edit', compact('category'));
     }
 
     /**
@@ -75,6 +76,9 @@ class CategoryController extends Controller
                 'icon' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ]);
             if ($request->hasFile('icon')) {
+                if ($category->icon && Storage::disk('public')->exists($category->icon)) {
+                    Storage::disk('public')->delete($category->icon);
+                }
                 $iconPath = $request->file('icon')->store('icons', 'public');
                 $category->icon = $iconPath;
             }
@@ -93,11 +97,13 @@ class CategoryController extends Controller
     public function destroy(string $id)
     {
         $category = Category::findOrFail($id);
-        if ($category) {
-            $category->delete();
-            return redirect()->route('categories.index')->with('success', 'Data berhasil dihapus!');
-        } else {
-            return redirect()->route('categories.index')->with('error', 'Data tidak ditemukan!');
+
+        if ($category->icon && Storage::disk('public')->exists($category->icon)) {
+            Storage::disk('public')->delete($category->icon);
         }
+
+        $category->delete();
+
+        return redirect()->route('categories.index')->with('success', 'Data berhasil dihapus!');
     }
 }
