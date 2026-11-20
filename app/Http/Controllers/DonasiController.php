@@ -15,14 +15,8 @@ class DonasiController extends Controller
     public function index()
     {
         $category = Category::all();
-        $campaign = Campaign::all()->map(function ($item) {
-            $item->start_date = Carbon::parse($item->start_date);
-            $item->end_date = Carbon::parse($item->end_date);
-            $item->days_remaining = max(0, (int) now()->startOfDay()->diffInDays($item->end_date, false));
-            $item->total_donations = Donasi::where('campaign_id', $item->campaign_id)
-                ->where('status', 'completed')->count();
-            return $item;
-        });
+        $campaign = Campaign::withTotalDonations()->get()
+            ->each(fn ($item) => $item->decorate());
 
         return view('index', compact('campaign', 'category'));
     }
@@ -30,47 +24,28 @@ class DonasiController extends Controller
     public function Selengkapnya()
     {
         $search = request()->input('q');
-        if ($search) {
-            $campaigns = Campaign::where('title', 'like', '%' . $search . '%')
-                ->orWhere('campaign_id', 'like', '%' . $search . '%')
-                ->paginate(20);
-            $campaigns->map(function ($item) {
-                $item->start_date = Carbon::parse($item->start_date);
-                $item->end_date = Carbon::parse($item->end_date);
-                $item->days_remaining = max(0, (int) now()->startOfDay()->diffInDays($item->end_date, false));
-                $item->progress = $item->target_amount > 0 ? ($item->collected_amount / $item->target_amount) * 100 : 0;
-                $item->total_donations = Donasi::where('campaign_id', $item->campaign_id)
-                    ->where('status', 'completed')->count();
-                return $item;
-            });
-        } else {
-            $campaigns = Campaign::all()->map(function ($item) {
-                $item->start_date = Carbon::parse($item->start_date);
-                $item->end_date = Carbon::parse($item->end_date);
-                $item->days_remaining = max(0, (int) now()->startOfDay()->diffInDays($item->end_date, false));
-                $item->progress = $item->target_amount > 0 ? ($item->collected_amount / $item->target_amount) * 100 : 0;
-                $item->total_donations = Donasi::where('campaign_id', $item->campaign_id)
-                    ->where('status', 'completed')->count();
-    
-                return $item;
-            });
-        }
+
+        $campaigns = Campaign::withTotalDonations()
+            ->when($search, function ($query) use ($search) {
+                // Dikelompokkan agar kondisi OR tidak merusak query lain
+                $query->where(function ($q) use ($search) {
+                    $q->where('title', 'like', '%' . $search . '%')
+                        ->orWhere('campaign_id', 'like', '%' . $search . '%');
+                });
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(20)
+            ->withQueryString();
+
+        $campaigns->getCollection()->each(fn ($item) => $item->decorate());
+
         return view('Pages.Selengkapnya', compact('campaigns', 'search'));
     }
 
     public function DetailDonasi($slug)
     {
-        $campaign = Campaign::where('slug', $slug)->firstOrFail();
-
-        $campaign->start_date = Carbon::parse($campaign->start_date);
-        $campaign->end_date = Carbon::parse($campaign->end_date);
-
-        $campaign->days_remaining = max(0, (int) now()->startOfDay()->diffInDays($campaign->end_date, false));
-        $campaign->progress = $campaign->target_amount > 0
-            ? ($campaign->collected_amount / $campaign->target_amount) * 100
-            : 0;
-        $campaign->total_donations = Donasi::where('campaign_id', $campaign->campaign_id)
-            ->where('status', 'completed')->count();
+        $campaign = Campaign::withTotalDonations()->where('slug', $slug)->firstOrFail();
+        $campaign->decorate();
 
         $donatur = $campaign->donatur = Donasi::where('campaign_id', $campaign->campaign_id)
             ->where('status', 'completed')
@@ -81,25 +56,15 @@ class DonasiController extends Controller
                 return $donasi;
             });
 
-
-        $campaigns = Campaign::where('campaign_id', '!=', $campaign->campaign_id)
+        $campaigns = Campaign::withTotalDonations()
+            ->where('campaign_id', '!=', $campaign->campaign_id)
             ->orderBy('created_at', 'desc')
             ->limit(3)
             ->get()
-            ->map(function ($item) {
-                $item->start_date = Carbon::parse($item->start_date);
-                $item->end_date = Carbon::parse($item->end_date);
-                $item->days_remaining = max(0, (int) now()->startOfDay()->diffInDays($item->end_date, false));
-                $item->progress = $item->target_amount > 0 ? ($item->collected_amount / $item->target_amount) * 100 : 0;
-                $item->total_donations = Donasi::where('campaign_id', $item->campaign_id)
-                    ->where('status', 'completed')->count();
-                return $item;
-            });
-
+            ->each(fn ($item) => $item->decorate());
 
         return view('Pages.DetailDonasi', compact('campaign', 'campaigns', 'donatur'));
     }
-
 
     public function TentangKami()
     {
@@ -113,20 +78,8 @@ class DonasiController extends Controller
             return redirect()->back()->with('error', 'Kategori tidak ditemukan.');
         }
 
-        $campaigns = $category->campaigns->map(function ($item) {
-            $item->start_date = Carbon::parse($item->start_date);
-            $item->end_date = Carbon::parse($item->end_date);
-            $item->days_remaining = max(0, (int) now()->startOfDay()->diffInDays($item->end_date, false));
-            $item->progress = $item->target_amount > 0
-                ? round(($item->collected_amount / $item->target_amount) * 100, 2)
-                : 0;
-
-            $item->total_donations = Donasi::where('campaign_id', $item->campaign_id)
-                ->where('status', 'completed')
-                ->count();
-
-            return $item;
-        });
+        $campaigns = $category->campaigns()->withTotalDonations()->get()
+            ->each(fn ($item) => $item->decorate());
 
         return view('Pages.CategoryDonasi', compact('category', 'campaigns'));
     }
@@ -136,8 +89,6 @@ class DonasiController extends Controller
         $donasi = Donasi::where('user_id', Auth::user()->user_id)->sum('amount');
         return view('Pages.Profile', compact('donasi'));
     }
-
-
 
     public function DetailPayment($id)
     {

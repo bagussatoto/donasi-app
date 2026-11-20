@@ -56,4 +56,8 @@
         @endforeach
 
     </div>
+
+    <div class="mt-6 px-3">
+        {{ $campaigns->links() }}
+    </div>
 @endsection

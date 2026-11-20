@@ -18,12 +18,10 @@ class DashboardController extends Controller
         $donasi = Campaign::all();
         $totalDonatur = Transaksi::where('status', 'completed')->count();
         $category = Category::all();
-        $campaign = Campaign::with('category')->orderBy('created_at', 'desc')->limit(4)->get()->map(function ($item) {
+        $campaign = Campaign::with('category')->withTotalDonations()->orderBy('created_at', 'desc')->limit(4)->get()->map(function ($item) {
             $item->start_date = Carbon::parse($item->start_date);
             $item->end_date = Carbon::parse($item->end_date);
             $item->days_remaining = max(0, (int) now()->startOfDay()->diffInDays($item->end_date, false));
-            $item->total_donations = Donasi::where('campaign_id', $item->campaign_id)
-                ->where('status', 'completed')->count();
 
             return $item;
         });

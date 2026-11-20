@@ -69,8 +69,32 @@ class Campaign extends Model
     /**
      * Relasi One-to-Many: Campaigns ke Donations.
      */
-    // public function donations()
-    // {
-    //     return $this->hasMany(Donation::class, 'campaign_id', 'campaign_id');
-    // }
+    public function donations()
+    {
+        return $this->hasMany(Donasi::class, 'campaign_id', 'campaign_id');
+    }
+
+    /**
+     * Scope: tambahkan atribut total_donations (jumlah donasi berstatus completed)
+     * dalam satu query agar tidak terjadi N+1.
+     */
+    public function scopeWithTotalDonations($query)
+    {
+        return $query->withCount([
+            'donations as total_donations' => fn ($q) => $q->where('status', 'completed'),
+        ]);
+    }
+
+    /**
+     * Isi atribut tampilan (sisa hari & progres) pada campaign.
+     */
+    public function decorate(): static
+    {
+        $this->days_remaining = max(0, (int) now()->startOfDay()->diffInDays($this->end_date, false));
+        $this->progress = $this->target_amount > 0
+            ? round(($this->collected_amount / $this->target_amount) * 100, 2)
+            : 0;
+
+        return $this;
+    }
 }
