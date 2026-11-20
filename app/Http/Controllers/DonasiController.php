@@ -18,7 +18,7 @@ class DonasiController extends Controller
         $campaign = Campaign::all()->map(function ($item) {
             $item->start_date = Carbon::parse($item->start_date);
             $item->end_date = Carbon::parse($item->end_date);
-            $item->days_remaining = $item->start_date->diffInDays($item->end_date);
+            $item->days_remaining = max(0, (int) now()->startOfDay()->diffInDays($item->end_date, false));
             $item->total_donations = Donasi::where('campaign_id', $item->campaign_id)
                 ->where('status', 'completed')->count();
             return $item;
@@ -37,7 +37,7 @@ class DonasiController extends Controller
             $campaigns->map(function ($item) {
                 $item->start_date = Carbon::parse($item->start_date);
                 $item->end_date = Carbon::parse($item->end_date);
-                $item->days_remaining = $item->start_date->diffInDays($item->end_date);
+                $item->days_remaining = max(0, (int) now()->startOfDay()->diffInDays($item->end_date, false));
                 $item->progress = $item->target_amount > 0 ? ($item->collected_amount / $item->target_amount) * 100 : 0;
                 $item->total_donations = Donasi::where('campaign_id', $item->campaign_id)
                     ->where('status', 'completed')->count();
@@ -47,7 +47,7 @@ class DonasiController extends Controller
             $campaigns = Campaign::all()->map(function ($item) {
                 $item->start_date = Carbon::parse($item->start_date);
                 $item->end_date = Carbon::parse($item->end_date);
-                $item->days_remaining = $item->start_date->diffInDays($item->end_date);
+                $item->days_remaining = max(0, (int) now()->startOfDay()->diffInDays($item->end_date, false));
                 $item->progress = $item->target_amount > 0 ? ($item->collected_amount / $item->target_amount) * 100 : 0;
                 $item->total_donations = Donasi::where('campaign_id', $item->campaign_id)
                     ->where('status', 'completed')->count();
@@ -65,7 +65,7 @@ class DonasiController extends Controller
         $campaign->start_date = Carbon::parse($campaign->start_date);
         $campaign->end_date = Carbon::parse($campaign->end_date);
 
-        $campaign->days_remaining = $campaign->start_date->diffInDays($campaign->end_date);
+        $campaign->days_remaining = max(0, (int) now()->startOfDay()->diffInDays($campaign->end_date, false));
         $campaign->progress = $campaign->target_amount > 0
             ? ($campaign->collected_amount / $campaign->target_amount) * 100
             : 0;
@@ -89,7 +89,7 @@ class DonasiController extends Controller
             ->map(function ($item) {
                 $item->start_date = Carbon::parse($item->start_date);
                 $item->end_date = Carbon::parse($item->end_date);
-                $item->days_remaining = $item->start_date->diffInDays($item->end_date);
+                $item->days_remaining = max(0, (int) now()->startOfDay()->diffInDays($item->end_date, false));
                 $item->progress = $item->target_amount > 0 ? ($item->collected_amount / $item->target_amount) * 100 : 0;
                 $item->total_donations = Donasi::where('campaign_id', $item->campaign_id)
                     ->where('status', 'completed')->count();
@@ -116,7 +116,7 @@ class DonasiController extends Controller
         $campaigns = $category->campaigns->map(function ($item) {
             $item->start_date = Carbon::parse($item->start_date);
             $item->end_date = Carbon::parse($item->end_date);
-            $item->days_remaining = $item->start_date->diffInDays($item->end_date);
+            $item->days_remaining = max(0, (int) now()->startOfDay()->diffInDays($item->end_date, false));
             $item->progress = $item->target_amount > 0
                 ? round(($item->collected_amount / $item->target_amount) * 100, 2)
                 : 0;

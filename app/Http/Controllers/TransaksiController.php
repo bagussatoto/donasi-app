@@ -33,6 +33,12 @@ class TransaksiController extends Controller
             'show_name' => 'nullable|string|in:on,off',
         ]);
 
+        // Kampanye harus aktif dan belum berakhir
+        $targetCampaign = Campaign::findOrFail($validatedData['campaign_id']);
+        if (!$targetCampaign->status || $targetCampaign->end_date->endOfDay()->isPast()) {
+            return back()->with('error', 'Kampanye ini sudah tidak menerima donasi.');
+        }
+
         if(Auth::check()){
             $user = Auth::user();
             $validatedData['user_id'] = $user->user_id;

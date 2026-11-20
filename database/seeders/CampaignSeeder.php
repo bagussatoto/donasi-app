@@ -20,7 +20,7 @@ class CampaignSeeder extends Seeder
             'target_amount' => 10000000,
             'start_date' => now(),
             'end_date' => now()->addDays(30),
-            'image_path' => '/images/campaigns/disaster.jpg',
+            'image_path' => null,
             'status' => true,
         ]);
     }

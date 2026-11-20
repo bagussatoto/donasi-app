@@ -67,7 +67,7 @@ class CampaignController extends Controller
         $campaign->start_date = Carbon::parse($campaign->start_date);
         $campaign->end_date = Carbon::parse($campaign->end_date);
 
-        $campaign->days_remaining = $campaign->start_date->diffInDays($campaign->end_date);
+        $campaign->days_remaining = max(0, (int) now()->startOfDay()->diffInDays($campaign->end_date, false));
         $campaign->progress = $campaign->target_amount > 0
             ? ($campaign->collected_amount / $campaign->target_amount) * 100
             : 0;

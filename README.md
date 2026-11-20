@@ -152,7 +152,8 @@ Platform ini dirancang untuk menyelesaikan dua kebutuhan utama dalam pengelolaan
    ```
    > **Catatan Penting**:
    > - `CampaignSeeder` bergantung pada `category_id` tertentu yang dibuat oleh `CategorySeeder`, sehingga `CategorySeeder` harus dijalankan terlebih dahulu.
-   > - `UserSeeder` membuat akun admin bawaan (`email`: `admin@example.com`, `password`: `123`). **Segera ubah email dan password ini sebelum digunakan di lingkungan production.**
+   > - `UserSeeder` membuat akun admin dari `ADMIN_EMAIL` dan `ADMIN_PASSWORD` di `.env` (bawaan: `admin@example.com` / `ChangeMe123!`). **Segera ubah kredensial ini sebelum digunakan di lingkungan production.**
+   > - Atau jalankan semuanya sekaligus dengan `php artisan db:seed`.
 
 7. **Jalankan server pengembangan**
    Jalankan seluruh layanan pengembangan (Laravel server, queue listener, dan Vite) sekaligus:
