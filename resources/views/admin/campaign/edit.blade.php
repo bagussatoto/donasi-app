@@ -34,7 +34,7 @@
                                     <div class="d-flex flex-column align-items-center justify-content-center gap-2">
                                         <img id="preview-image" class="rounded mb-3 img-thumbnail" alt="Preview Image" 
                                             style="max-width: 18rem; max-height: 18rem; display: {{ $campaign->image_path ? 'block' : 'none' }};"
-                                            src="{{ $campaign->image_path ? asset('storage/' . $campaign->image_path) : '' }}">
+                                            src="{{ $campaign->image_path ? $campaign->image_url : '' }}">
                                         <i class="fas fa-image display-4"></i>
                                         <p class="text-center mb-1">Click Here To Upload Image</p>
                                         <p class="text-center text-muted mb-2">(Jpeg, Png, Jpg)</p>

@@ -53,8 +53,8 @@
                                 <tr>
                                     <td scope="row">{{ $loop->iteration }}</td>
                                     <td>
-                                        <a data-lightbox="blog-cover" href="{{ asset('storage/' . $item->image_path) }}">
-                                            <img src="{{ asset('storage/' . $item->image_path) }}"
+                                        <a data-lightbox="blog-cover" href="{{ $item->image_url }}">
+                                            <img src="{{ $item->image_url }}"
                                                 class="img-fluid rounded" alt="campaign-image" width="100" />
                                         </a>
                                     </td>

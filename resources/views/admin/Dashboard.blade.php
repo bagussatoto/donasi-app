@@ -35,7 +35,7 @@
                         <div class="col-md-6 mt-2">
                             <a href="{{ route('campaigns.show', $data->campaign_id) }}">
                                 <div class="card p-1" style="height: 16rem">
-                                    <img src="{{ asset('storage/' . $data->image_path) }}" class="img-fluid"
+                                    <img src="{{ $data->image_url }}" class="img-fluid"
                                         alt="campaign-image" style="border-radius: 20px">
                                     <div class="p-2 ">
                                         <h5> {{ $data->title }}</h5>

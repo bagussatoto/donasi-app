@@ -45,7 +45,7 @@
                 @foreach ($campaign as $item)
                     <div class="card bg-slate-100 shadow-xl mb-6  lg:h-auto h-aut lg:w-96 w-80 mt-3">
                         <a href="{{ url('donasi/detail/' . $item->slug) }}">
-                            <img src="{{ asset('storage/' . $item->image_path) }}" alt="Tidak Ada Image"
+                            <img src="{{ $item->image_url }}" alt="Tidak Ada Image"
                                 class="rounded-t-3xl w-full lg:h-60 h-40">
                             <div class="p-4">
                                 <h1

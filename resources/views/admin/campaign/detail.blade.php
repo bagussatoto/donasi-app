@@ -7,7 +7,7 @@
                 <div class="row">
                     <!-- Main Section -->
                     <div class="col-lg-7 px-3">
-                        <img src="{{ asset('storage/' . $campaign->image_path) }}" alt="campaign-image"
+                        <img src="{{ $campaign->image_url }}" alt="campaign-image"
                             class="rounded img-fluid w-100">
                         <div class="mt-4">
                             <h5 class="fw-bold">Deskripsi</h5>

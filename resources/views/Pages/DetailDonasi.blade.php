@@ -1,12 +1,12 @@
 @extends('layouts.app', ['title' => $campaign->title])
 @push('head')
-<meta property="og:image" content="{{ asset('storage/' . $campaign->image_path) }}" />
+<meta property="og:image" content="{{ $campaign->image_url }}" />
 @endpush
 @section('content')
     <h1 class="font-bold text-xl mt-10 p-4 lg:flex hidden">{{ $campaign->title }}</h1>
     <div class="flex gap-10 mt-5 ">
         <div class="w-full lg:w-8/12 px-4 lg:px-0">
-            <img src="{{ asset('storage/' . $campaign->image_path) }}" alt="" class="rounded-xl  w-full object-cover">
+            <img src="{{ $campaign->image_url }}" alt="" class="rounded-xl  w-full object-cover">
 
             {{-- Mobile Rincian Dana --}}
             <div class="bg-slate-50 p-1 shadow mt-4 lg:hidden">
@@ -70,7 +70,7 @@
                 @foreach ($campaigns as $item)
                     <a href="{{ url('donasi/detail/' . $item->slug) }}">
                         <div class="flex bg-slate-50 shadow-xl rounded-2xl gap-0">
-                            <img src="{{ asset('storage/' . $item->image_path) }}" alt=""
+                            <img src="{{ $item->image_url }}" alt=""
                                 class="rounded-3xl w-32 h-36 lg:w-36 lg:h-44 p-4 object-cover">
                             <div class="p-4">
                                 <h1 class="font-semibold lg:text-sm text-xs"> {{ $item->title }}

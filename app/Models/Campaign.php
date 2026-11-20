@@ -67,6 +67,16 @@ class Campaign extends Model
     }
 
     /**
+     * URL gambar kampanye; memakai placeholder bila gambar belum diunggah.
+     */
+    public function getImageUrlAttribute(): string
+    {
+        return $this->image_path
+            ? asset('storage/' . $this->image_path)
+            : asset('image/placeholder.svg');
+    }
+
+    /**
      * Relasi One-to-Many: Campaigns ke Donations.
      */
     public function donations()

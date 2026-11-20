@@ -20,7 +20,7 @@ Route::get('/profile', [DonasiController::class, 'ProfileDonasi'])->middleware('
 Route::get('/donasi/detail/{slug}', [DonasiController::class, 'DetailDonasi']);
 Route::get('donasi/payment/{id}', [DonasiController::class, 'DetailPayment']);
 Route::get('donasi/history', [DonasiController::class, 'HistoryDonasi'])->middleware('auth');
-Route::post('donasi/payment', [TransaksiController::class, 'berDonasi']);
+Route::post('donasi/payment', [TransaksiController::class, 'berDonasi'])->middleware('throttle:10,1');
 Route::post('/donasi/payment/callback', [TransaksiController::class, 'handleCallback']);
 
 Route::prefix('admin')->middleware(['admin'])->group(function () {
@@ -33,8 +33,8 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
 Route::middleware(['guest'])->group(function () {
     Route::get('auth/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('auth/login', [AuthController::class, 'authenticate']);
+    Route::post('auth/login', [AuthController::class, 'authenticate'])->middleware('throttle:10,1');
     Route::get('auth/register', [AuthController::class, 'showRegister'])->name('register');
-    Route::post('auth/register', [AuthController::class, 'register']);
+    Route::post('auth/register', [AuthController::class, 'register'])->middleware('throttle:10,1');
 });
 Route::get('logout', [AuthController::class, 'logout'])->middleware(['auth']);
