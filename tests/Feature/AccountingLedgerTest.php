@@ -32,12 +32,12 @@ class AccountingLedgerTest extends TestCase
     {
         $this->assertDatabaseHas('accounts', [
             'account_code' => '1-1001',
-            'account_name' => 'Kas & Bank - Penampung Donasi',
+            'name' => 'Kas & Bank - Penampung Donasi',
         ]);
 
         $this->assertDatabaseHas('accounts', [
             'account_code' => '2-1001',
-            'account_name' => 'Dana Donasi Terikat (Titipan Donatur)',
+            'name' => 'Dana Donasi Terikat (Titipan Donasi)',
         ]);
     }
 

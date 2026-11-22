@@ -20,6 +20,21 @@ class Account extends Model
         'description',
     ];
 
+    public function getAccountNameAttribute(): string
+    {
+        return $this->name ?? '';
+    }
+
+    public function getAccountTypeAttribute(): string
+    {
+        return $this->type ?? '';
+    }
+
+    public function getNormalBalanceAttribute(): string
+    {
+        return in_array($this->type, ['asset', 'expense']) ? 'debit' : 'credit';
+    }
+
     public function entries()
     {
         return $this->hasMany(JournalEntry::class, 'account_code', 'account_code');
