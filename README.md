@@ -2,13 +2,14 @@
 
 # Ayo Donasi
 
-Platform penggalangan dana dan donasi online berbasis web yang memudahkan masyarakat berdonasi secara cepat, aman, dan transparan, dengan verifikasi pembayaran otomatis serta dashboard analitik untuk administrator.
+Platform penggalangan dana dan donasi online berbasis web yang memudahkan masyarakat berdonasi secara cepat, aman, dan transparan, dengan verifikasi pembayaran otomatis (Midtrans Gateway), modul pencairan dana (*disbursement*), sistem kabar perkembangan, serta dashboard analitik administrator.
 
 ![Laravel](https://img.shields.io/badge/Laravel-11-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
 ![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=for-the-badge&logo=php&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-Database-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
 ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-3.4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
 ![Midtrans](https://img.shields.io/badge/Midtrans-Payment_Gateway-002855?style=for-the-badge)
+![Pest Testing](https://img.shields.io/badge/Testing-Pest_PHP-f43f5e?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
 </div>
@@ -24,6 +25,7 @@ Platform penggalangan dana dan donasi online berbasis web yang memudahkan masyar
 - [Pratinjau Aplikasi](#pratinjau-aplikasi)
 - [Panduan Instalasi](#panduan-instalasi)
 - [Konfigurasi Midtrans](#konfigurasi-midtrans)
+- [Dokumentasi Lengkap Proyek](#dokumentasi-lengkap-proyek)
 - [Struktur Direktori](#struktur-direktori)
 - [Pembuat](#pembuat)
 - [Lisensi](#lisensi)
@@ -32,11 +34,12 @@ Platform penggalangan dana dan donasi online berbasis web yang memudahkan masyar
 
 ## Tentang Proyek
 
-**Ayo Donasi** adalah aplikasi web penggalangan dana (*crowdfunding*) yang dibangun menggunakan Laravel 11 untuk menjembatani donatur dengan berbagai kampanye sosial dan kemanusiaan secara transparan.
+**Ayo Donasi** adalah aplikasi web penggalangan dana (*crowdfunding*) yang dibangun menggunakan **Laravel 11** untuk menjembatani donatur dengan berbagai kampanye sosial, medis, dan kemanusiaan secara transparan dan akuntabel.
 
-Platform ini dirancang untuk menyelesaikan dua kebutuhan utama dalam pengelolaan donasi digital:
-- **Kemudahan & Kepercayaan Donatur**: Mendukung donasi cepat baik sebagai tamu (*guest*) maupun pengguna terdaftar, lengkap dengan pilihan donasi anonim, pesan/doa, pelacakan progres kampanye secara langsung, dan pembayaran otomatis melalui **Midtrans Snap**.
-- **Efisiensi Pengelolaan Admin**: Menyediakan panel administrator terintegrasi untuk mengelola kategori, kampanye, data pengguna, serta memantau metrik dan grafik progres penghimpunan dana.
+Platform ini dirancang untuk menyelesaikan kebutuhan inti dalam ekosistem filantropi digital:
+- **Kemudahan & Kepercayaan Donatur**: Mendukung donasi cepat tanpa wajib login (*guest donation*) maupun login, opsi donasi anonim, pesan doa, kabar perkembangan berkala (*campaign updates*), serta verifikasi pembayaran instan via **Midtrans Snap API**.
+- **Efisiensi & Transparansi Pengelolaan**: Menyediakan panel admin terintegrasi untuk kurasi kampanye, pemantauan analitik Chart.js, serta pencatatan audit **pencairan dana (*disbursement*)** ke rekening penerima manfaat secara terverifikasi.
+- **Kepatuhan Regulasi & Industri**: Dilengkapi dengan klausul Syarat & Ketentuan, Kebijakan Privasi sesuai UU PDP No. 27/2022, SOP mitigasi *fraud*, dan pedoman pencatatan akuntansi donasi.
 
 ---
 
@@ -44,20 +47,24 @@ Platform ini dirancang untuk menyelesaikan dua kebutuhan utama dalam pengelolaan
 
 ### Pengguna & Donatur
 
-- **Eksplorasi & Pencarian Kampanye**: Menjelajahi daftar kampanye aktif, menyaring kampanye berdasarkan kategori (`/category/{id}`), dan mencari kampanye melalui halaman katalog (`/selengkapnya`).
-- **Detail Kampanye & Transparansi**: Menampilkan informasi target dana, dana terkumpul, persentase progres, sisa hari kampanye, daftar donatur beserta pesan/doa, serta fitur berbagi kampanye.
-- **Donasi Fleksibel (Guest & Terdaftar)**: Pengguna dapat berdonasi secara langsung tanpa login maupun menggunakan akun terdaftar untuk kemudahan pelacakan, disertai opsi menampilkan atau menyembunyikan nama (`show_name`).
-- **Pembayaran Terintegrasi Midtrans**: Pembuatan transaksi dan *Snap Token* secara otomatis dengan pembaruan status pembayaran *real-time* melalui webhook callback.
-- **Profil & Riwayat Donasi**: Pengguna yang masuk dapat melihat ringkasan total kontribusi (`/profile`) serta riwayat transaksi donasinya (`/donasi/history`).
+- **Eksplorasi & Pencarian Kampanye**: Menjelajahi katalog kampanye aktif, filter per kategori (`/category/{id}`), dan pencarian terpaginasi bebas N+1 query (`/selengkapnya`).
+- **Detail Kampanye & Transparansi**: Menampilkan rincian target dana, dana terkumpul, progres bar real-time, sisa hari, dan daftar donatur terverifikasi.
+- **Kabar Terbaru & Perkembangan**: Donatur dapat membaca kronologi kabar perkembangan penerima manfaat (*campaign updates*) lengkap dengan foto dokumentasi.
+- **Donasi Fleksibel (Guest & Terdaftar)**: Pengguna dapat berdonasi tanpa login atau dengan akun terdaftar, dilengkapi opsi menyembunyikan nama (*anonim*).
+- **Pembayaran Terintegrasi Midtrans**: Integrasi Midtrans Snap (QRIS, Virtual Account, E-Wallet) dengan verifikasi notifikasi webhook otomatis (`SHA-512`).
+- **Profil & Riwayat Donasi**: Pengguna terdaftar dapat memantau total donasi yang telah disalurkan (`/profile`) dan riwayat transaksinya (`/donasi/history`).
+- **Legalitas & Kepercayaan**: Tersedia halaman publik resmi untuk [Syarat & Ketentuan](/syarat-ketentuan) dan [Kebijakan Privasi](/kebijakan-privasi).
 
 ### Panel Administrator
 
 > Seluruh rute di bawah prefix `/admin` dilindungi oleh middleware `admin`.
 
-- **Dashboard Statistik & Analitik**: Menampilkan ringkasan total kampanye, total donatur terverifikasi, jumlah kategori, daftar kampanye terbaru, serta visualisasi grafik progres setiap kampanye berbasis **Chart.js** melalui endpoint `/admin/statistics`.
-- **Manajemen Kategori (CRUD)**: Menambah, mengubah, dan menghapus kategori donasi lengkap dengan deskripsi dan unggahan ikon (`/admin/categories`).
-- **Manajemen Kampanye (CRUD)**: Mengelola judul, kategori, deskripsi, target dana, periode kampanye (`start_date` & `end_date`), unggahan gambar kampanye, serta status aktif/nonaktif (`/admin/campaigns`).
-- **Manajemen Pengguna**: Melihat daftar pengguna dengan fitur pencarian dan paginasi, serta menghapus akun non-admin dengan proteksi terhadap akun bertipe `admin` (`/admin/userman`).
+- **Dashboard Statistik & Analitik**: Menampilkan ringkasan total kampanye, total donatur terverifikasi, jumlah kategori, dan grafik capaian kampanye berbasis **Chart.js** via endpoint `/admin/statistics`.
+- **Manajemen Kategori (CRUD)**: Pengelolaan kategori donasi lengkap dengan deskripsi dan pembersihan otomatis file ikon lama di storage saat diupdate/dihapus (`/admin/categories`).
+- **Manajemen Kampanye (CRUD)**: Pengelolaan kampanye donasi, slug otomatis, upload foto, dan switch status aktif/nonaktif (`/admin/campaigns`).
+- **Kabar Terbaru Kampanye (Updates)**: Admin dapat menambahkan berita perkembangan kondisi penerima manfaat dan foto bukti dari halaman detail kampanye.
+- **Modul Pencairan Dana (Disbursements)**: Mencatat pengajuan dan penyaluran dana ke rekening bank penerima manfaat, validasi otomatis batas saldo tersedia (`available_balance`), serta upload bukti resi transfer (`/admin/disbursements`).
+- **Manajemen Pengguna**: Pencarian, paginasi data pengguna, dan proteksi agar akun bertipe `admin` tidak dapat dihapus (`/admin/userman`).
 
 ---
 
@@ -66,11 +73,11 @@ Platform ini dirancang untuk menyelesaikan dua kebutuhan utama dalam pengelolaan
 | Lapisan | Teknologi |
 | :--- | :--- |
 | **Backend** | Laravel 11 (`^11.31`), PHP `^8.2`, `fahlisaputra/laravel-minify` |
-| **Database** | MySQL (dengan primary key berbasis UUID) |
-| **Frontend (Pengguna)** | Blade Templates, Tailwind CSS `^3.4`, DaisyUI `^4.12`, Vite `^6.0`, Swiper, Splide, Owl Carousel, Toastify |
-| **Frontend (Admin)** | Bootstrap, Chart.js, SweetAlert2, Lightbox2 |
+| **Database** | MySQL (dengan Primary Key berbasis UUID) |
+| **Frontend (Pengguna)** | Blade Templates, Tailwind CSS `^3.4`, DaisyUI `^4.12`, Vite `^6.0`, Splide, Toastify |
+| **Frontend (Admin)** | Bootstrap, Chart.js `^4.4`, SweetAlert2 `^11.15`, Lightbox2 `^2.11`, Solar Iconify |
 | **Payment Gateway** | Midtrans (`midtrans/midtrans-php` `^2.6` — Snap API & Webhook Callback) |
-| **Testing & Kualitas Kode** | Pest PHP `^3.7`, Laravel Pint |
+| **Testing & CI** | Pest PHP `^3.7`, SQLite In-Memory, GitHub Actions CI Workflow |
 
 ---
 
@@ -85,8 +92,10 @@ Platform ini dirancang untuk menyelesaikan dua kebutuhan utama dalam pengelolaan
 | `users` | `user_id` (UUID) | `name`, `email` (unique), `phone`, `password`, `role` (`user`, `admin`) |
 | `categories` | `category_id` (UUID) | `name`, `description`, `icon` |
 | `campaigns` | `campaign_id` (UUID) | `category_id` (FK -> `categories`), `slug` (unique), `title`, `description`, `target_amount`, `collected_amount`, `start_date`, `end_date`, `image_path`, `status` |
+| `campaign_updates` | `update_id` (UUID) | `campaign_id` (FK -> `campaigns`), `title`, `content`, `image_path` |
 | `donations` | `donation_id` (UUID) | `user_id` (FK -> `users`, nullable), `campaign_id` (FK -> `campaigns`), `amount`, `message`, `show_name`, `status` (`pending`, `failed`, `completed`) |
 | `transactions` | `transaction_id` (UUID) | `donation_id` (FK -> `donations`), `midtrans_order_id` (unique), `gross_amount`, `snap_token`, `status` (`pending`, `failed`, `completed`) |
+| `disbursements` | `disbursement_id` (UUID) | `campaign_id` (FK -> `campaigns`), `user_id` (FK -> `users`), `amount`, `bank_name`, `account_number`, `account_name`, `purpose`, `receipt_path`, `status` |
 
 ---
 
@@ -108,7 +117,7 @@ Platform ini dirancang untuk menyelesaikan dua kebutuhan utama dalam pengelolaan
 
 ### Prasyarat
 
-- **PHP** >= 8.2 beserta ekstensi standar Laravel (`mbstring`, `openssl`, `pdo_mysql`, dll.)
+- **PHP** >= 8.2 beserta ekstensi (`mbstring`, `openssl`, `pdo_mysql`, `curl`, dll.)
 - **Composer**
 - **Node.js & npm**
 - **MySQL**
@@ -133,10 +142,10 @@ Platform ini dirancang untuk menyelesaikan dua kebutuhan utama dalam pengelolaan
    cp .env.example .env
    php artisan key:generate
    ```
-   *(Di Windows Command Prompt/PowerShell, Anda dapat menggunakan `copy .env.example .env`)*
+   *(Di Windows Command Prompt/PowerShell: `copy .env.example .env`)*
 
 4. **Konfigurasi database dan Midtrans di `.env`**
-   Sesuaikan koneksi MySQL (default pada `.env.example` menggunakan `DB_DATABASE=donasi`) serta tambahkan variabel konfigurasi Midtrans (lihat bagian [Konfigurasi Midtrans](#konfigurasi-midtrans)).
+   Sesuaikan koneksi database MySQL (`DB_DATABASE=donasi`, `DB_USERNAME`, `DB_PASSWORD`) dan kunci API Midtrans.
 
 5. **Jalankan migrasi database dan buat symbolic link storage**
    ```bash
@@ -144,33 +153,28 @@ Platform ini dirancang untuk menyelesaikan dua kebutuhan utama dalam pengelolaan
    php artisan storage:link
    ```
 
-6. **(Opsional) Jalankan seeder data awal secara berurutan**
+6. **(Opsional) Isi data awal menggunakan Database Seeder**
    ```bash
-   php artisan db:seed --class=UserSeeder
-   php artisan db:seed --class=CategorySeeder
-   php artisan db:seed --class=CampaignSeeder
+   php artisan db:seed
    ```
-   > **Catatan Penting**:
-   > - `CampaignSeeder` bergantung pada `category_id` tertentu yang dibuat oleh `CategorySeeder`, sehingga `CategorySeeder` harus dijalankan terlebih dahulu.
-   > - `UserSeeder` membuat akun admin dari `ADMIN_EMAIL` dan `ADMIN_PASSWORD` di `.env` (bawaan: `admin@example.com` / `ChangeMe123!`). **Segera ubah kredensial ini sebelum digunakan di lingkungan production.**
-   > - Atau jalankan semuanya sekaligus dengan `php artisan db:seed`.
+   > **Catatan**: `DatabaseSeeder` otomatis menjalankan `UserSeeder`, `CategorySeeder`, dan `CampaignSeeder` secara berurutan. Akun admin bawaan dibuat dari `ADMIN_EMAIL` dan `ADMIN_PASSWORD` di `.env` (default: `admin@example.com` / `ChangeMe123!`).
 
-7. **Jalankan server pengembangan**
-   Jalankan seluruh layanan pengembangan (Laravel server, queue listener, dan Vite) sekaligus:
+7. **Jalankan pengujian otomatis (Pest Testing)**
+   ```bash
+   ./vendor/bin/pest
+   ```
+
+8. **Jalankan server pengembangan**
    ```bash
    composer run dev
    ```
-   Atau jalankan secara terpisah pada dua terminal:
-   ```bash
-   php artisan serve
-   npm run dev
-   ```
+   *(Atau jalankan terpisah: `php artisan serve` dan `npm run dev`)*
 
 ---
 
 ## Konfigurasi Midtrans
 
-Tambahkan variabel berikut ke dalam file `.env` sesuai konfigurasi pada `config/midtrans.php`:
+Tambahkan variabel berikut ke dalam file `.env`:
 
 ```env
 MIDTRANS_IS_PRODUCTION=false
@@ -181,12 +185,27 @@ MIDTRANS_IS_3DS=true
 MIDTRANS_CALLBACK_URL=https://your-public-domain/donasi/payment/callback
 ```
 
-### Alur Webhook & Callback
+### Alur Webhook & Keamanan Callback
 
-1. Saat donatur mengirim formulir donasi (`POST /donasi/payment`), aplikasi membuat catatan `donations` dan `transactions`, lalu meminta `snap_token` melalui Midtrans Snap API.
-2. Ketika pembayaran diproses, Midtrans mengirimkan notifikasi HTTP ke endpoint `POST /donasi/payment/callback` (jalur `donasi*` telah dikecualikan dari verifikasi CSRF pada `bootstrap/app.php`).
-3. `TransaksiController::handleCallback` memvalidasi `signature_key` menggunakan hash `SHA-512`, memperbarui `transactions.status` dan `donations.status`, lalu menghitung ulang `campaigns.collected_amount` berdasarkan total donasi berstatus `completed`.
-4. Untuk pengujian webhook di lingkungan lokal (`localhost`), ekspos aplikasi menggunakan *tunnel* publik (misalnya **ngrok**) dan arahkan `MIDTRANS_CALLBACK_URL` serta pengaturan Notification URL pada dashboard Midtrans ke domain publik tersebut.
+1. Saat donatur menekan donasi (`POST /donasi/payment`), aplikasi membuat record `donations` dan `transactions`, lalu menerbitkan Snap Token via Midtrans API.
+2. Saat pembayaran lunas, Midtrans mengirimkan notifikasi HTTP ke endpoint `POST /donasi/payment/callback`.
+3. `TransaksiController::handleCallback` memvalidasi keaslian signature key (`SHA-512`), mencocokkan nominal `gross_amount`, memperbarui status transaksi menjadi `completed`, serta menghitung ulang `collected_amount` kampanye.
+4. Sistem juga menangani skenario refund/chargeback secara aman dengan membatalkan status transaksi dan mengurangi akumulasi donasi kampanye.
+
+---
+
+## Dokumentasi Lengkap Proyek
+
+Seluruh dokumentasi teknis, perancangan, hukum, dan tata kelola platform tersedia di direktori [`docs/`](./docs):
+
+- 📘 [**Alur Proyek & Arsitektur Lengkap**](./docs/ALUR_PROYEK.md): Menjelaskan arsitektur detail sistem, pipeline middleware, alur webhook, dan peta rute.
+- 🗄️ [**Bagan Diagram Database (ERD)**](./docs/DIAGRAM_DATABASE.md): Diagram ERD Mermaid dan kamus data (*Data Dictionary*) seluruh tabel database.
+- 📐 [**Use Case Diagram & Skenario UML**](./docs/USE_CASE_DIAGRAM_DAN_SKENARIO.md): Diagram use case UML, identifikasi 4 aktor, matriks hak akses, dan narasi skenario use case.
+- 🎨 [**Wireframe & Spesifikasi Desain UI/UX**](./docs/WIREFRAME_DAN_UI_UX_DESIGN.md): Cetak biru wireframe ASCII, hierarki visual, user flow, dan panduan prototipe Figma.
+- ⚖️ [**Saran Badan Hukum & Kepatuhan Legal**](./docs/SARAN_RELASI_BADAN_HUKUM.md): Panduan perizinan PUB Kemensos, bentuk yayasan, dan usulan skema kepatuhan hukum.
+- 🛡️ [**SOP Verifikasi & Mitigasi Fraud**](./docs/SOP_VERIFIKASI_DAN_MITIGASI_FRAUD.md): Standar prosedur KYC/KYB, kurasi kampanye, anti-fraud payment gateway, dan tata kelola pencairan.
+- 📊 [**Pedoman Jurnal Keuangan & Akuntansi Donasi**](./docs/PEDOMAN_JURNAL_KEUANGAN_DONASI.md): Standar pembukuan dana titipan PSAK 109, ilustrasi jurnal debit/kredit, dan laporan LPJ finansial.
+- 📜 [**Syarat Ketentuan & Kebijakan Privasi**](./docs/SYARAT_KETENTUAN_DAN_PRIVASI.md): Naskah hukum perlindungan data UU PDP No. 27/2022 dan kepatuhan Midtrans Production.
 
 ---
 
@@ -196,27 +215,30 @@ MIDTRANS_CALLBACK_URL=https://your-public-domain/donasi/payment/callback
 donasi/
 ├── app/
 │   ├── Http/
-│   │   ├── Controllers/      # Auth, Campaign, Category, Dashboard, Donasi, Transaksi, Userman
+│   │   ├── Controllers/      # Auth, Campaign, Category, Dashboard, Donasi, Transaksi, Disbursement, CampaignUpdate, Userman
 │   │   └── Middleware/       # isAdmin middleware
-│   ├── Models/               # Campaign, Category, Donasi, Transaksi, User
+│   ├── Models/               # Campaign, CampaignUpdate, Category, Disbursement, Donasi, Transaksi, User
 │   └── View/Components/      # ModalPayment, ModalShare, Navbar
 ├── config/
 │   └── midtrans.php          # Konfigurasi kunci & callback Midtrans
 ├── database/
-│   ├── migrations/           # Skema tabel users, categories, campaigns, donations, transactions
-│   └── seeders/              # UserSeeder, CategorySeeder, CampaignSeeder
-├── public/                   # Aset publik, gambar statis, dan hasil build
+│   ├── migrations/           # Skema tabel users, categories, campaigns, updates, donations, transactions, disbursements
+│   └── seeders/              # UserSeeder, CategorySeeder, CampaignSeeder, DatabaseSeeder
+├── docs/                     # Dokumentasi arsitektur, ERD, Use Case, UI/UX, SOP, Jurnal, dan Legalitas
+├── public/                   # Aset publik, gambar statis, placeholder.svg, dan hasil build Vite
 ├── resources/
 │   ├── css/                  # Entrypoint Tailwind CSS
 │   ├── js/                   # Entrypoint JS & Slider
 │   └── views/
-│       ├── admin/            # Dashboard, manajemen campaign, category, dan user
-│       ├── auth/             # Halaman login & register
+│       ├── admin/            # Dashboard, manajemen campaign, category, disbursement, dan user
+│       ├── auth/             # Halaman login & register (lengkap dengan validasi phone & confirmation)
 │       ├── components/       # Komponen UI reusable (modal, navbar, alert)
 │       ├── layouts/          # Layout utama pengguna (app) & admin
-│       └── Pages/            # Halaman detail donasi, payment, riwayat, profil, kategori
-└── routes/
-    └── web.php               # Definisi rute publik, donasi, autentikasi, dan panel admin
+│       └── Pages/            # Halaman detail donasi, payment, riwayat, profil, kategori, syarat ketentuan, privasi
+├── routes/
+│   └── web.php               # Definisi seluruh rute aplikasi
+└── tests/
+    └── Feature/              # Pengujian Pest: AdminAccess, Auth, CampaignUpdate, Disbursement, DonationFlow
 ```
 
 ---
