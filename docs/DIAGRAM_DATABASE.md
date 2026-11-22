@@ -12,9 +12,64 @@ Diagram berikut merepresentasikan seluruh entitas utama dan relasinya di dalam s
 erDiagram
     USERS ||--o{ DONATIONS : "melakukan (opsional)"
     USERS ||--o{ SESSIONS : "memiliki"
+    USERS ||--o{ DISBURSEMENTS : "mencairkan (admin)"
     CATEGORIES ||--o{ CAMPAIGNS : "mengelompokkan"
     CAMPAIGNS ||--o{ DONATIONS : "menerima"
+    CAMPAIGNS ||--o{ DISBURSEMENTS : "menyalurkan"
+    CAMPAIGNS ||--o{ CAMPAIGN_UPDATES : "memiliki"
     DONATIONS ||--|| TRANSACTIONS : "menghasilkan"
+
+    %% Double-Entry Accounting Ledger
+    ACCOUNTS ||--o{ JOURNAL_ENTRIES : "memiliki riwayat"
+    JOURNAL_HEADERS ||--o{ JOURNAL_ENTRIES : "berisi"
+    JOURNAL_HEADERS }o--|| DONATIONS : "polymorphic source"
+    JOURNAL_HEADERS }o--|| DISBURSEMENTS : "polymorphic source"
+
+    ACCOUNTS {
+        string account_code PK "Kode akun unik (e.g. 1-1001)"
+        string account_name "Nama akun COA"
+        enum account_type "asset, liability, equity, revenue, expense"
+        enum normal_balance "debit atau credit"
+        text description "Keterangan akun"
+    }
+
+    JOURNAL_HEADERS {
+        uuid header_id PK "UUID Primary Key"
+        string voucher_number UK "Nomor voucher unik (JV-...)"
+        date transaction_date "Tanggal transaksi"
+        string source_type "Polymorphic class (Donasi/Disbursement)"
+        uuid source_id "Polymorphic foreign key"
+        text description "Uraian jurnal transaksi"
+    }
+
+    JOURNAL_ENTRIES {
+        uuid entry_id PK "UUID Primary Key"
+        uuid header_id FK "FK ke journal_headers"
+        string account_code FK "FK ke accounts"
+        unsigned_bigint debit "Nilai debit (Rp)"
+        unsigned_bigint credit "Nilai kredit (Rp)"
+    }
+
+    DISBURSEMENTS {
+        uuid disbursement_id PK "UUID (Primary Key)"
+        uuid campaign_id FK "FK ke campaigns"
+        uuid user_id FK "FK ke users (pencatat)"
+        unsigned_bigint amount "Nominal pencairan"
+        string bank_name "Nama bank tujuan"
+        string account_number "Nomor rekening tujuan"
+        string account_name "Nama pemilik rekening"
+        text purpose "Tujuan penggunaan dana"
+        string receipt_path "Path bukti transfer/kwitansi"
+        enum status "Status: completed, pending, cancelled"
+    }
+
+    CAMPAIGN_UPDATES {
+        uuid update_id PK "UUID (Primary Key)"
+        uuid campaign_id FK "FK ke campaigns"
+        string title "Judul kabar terbaru"
+        text content "Uraian perkembangan penyaluran"
+        string image_path "Foto dokumentasi"
+    }
 
     USERS {
         uuid user_id PK "UUID (Primary Key)"
@@ -182,6 +237,101 @@ Menyimpan data transaksi gateway pembayaran (Midtrans Snap).
 | `gross_amount` | `BIGINT UNSIGNED` | Tidak | Nominal bruto transaksi |
 | `status` | `ENUM('pending', 'failed', 'completed')` | Tidak | Status transaksi (Default: `'pending'`) |
 | `snap_token` | `VARCHAR(255)` | Ya | Token Snap untuk memunculkan popup pembayaran |
+| `created_at` | `TIMESTAMP` | Ya | Waktu record dibuat |
+| `updated_at` | `TIMESTAMP` | Ya | Waktu record terakhir diperbarui |
+
+---
+
+### 2.6. Tabel `disbursements`
+Menyimpan data pengajuan dan penyaluran dana donasi ke rekening penerima manfaat.
+- **Primary Key:** `disbursement_id` (UUID)
+- **Foreign Keys:**
+  - `campaign_id` $\rightarrow$ `campaigns.campaign_id` (`ON DELETE CASCADE`)
+  - `user_id` $\rightarrow$ `users.user_id` (`ON DELETE CASCADE`)
+
+| Kolom | Tipe Data | Nullable | Keterangan |
+| :--- | :--- | :---: | :--- |
+| `disbursement_id` | `CHAR(36)` / UUID | Tidak | ID unik pencairan dana |
+| `campaign_id` | `CHAR(36)` / UUID | Tidak | Relasi kampanye asal dana |
+| `user_id` | `CHAR(36)` / UUID | Tidak | Relasi admin pemroses pencairan |
+| `amount` | `BIGINT UNSIGNED` | Tidak | Nominal pencairan (Min. Rp 10.000) |
+| `bank_name` | `VARCHAR(100)` | Tidak | Nama bank penerima manfaat |
+| `account_number` | `VARCHAR(50)` | Tidak | Nomor rekening penerima manfaat |
+| `account_name` | `VARCHAR(150)` | Tidak | Nama pemilik rekening |
+| `purpose` | `TEXT` | Tidak | Alasan / peruntukan pencairan |
+| `receipt_path` | `VARCHAR(255)` | Ya | Path file foto bukti transfer/kwitansi |
+| `status` | `ENUM('pending', 'completed', 'cancelled')` | Tidak | Status pencairan (Default: `'completed'`) |
+| `created_at` | `TIMESTAMP` | Ya | Waktu record dibuat |
+| `updated_at` | `TIMESTAMP` | Ya | Waktu record terakhir diperbarui |
+
+---
+
+### 2.7. Tabel `campaign_updates`
+Menyimpan riwayat berita, rilis kabar terbaru, dan dokumentasi perkembangan kampanye.
+- **Primary Key:** `update_id` (UUID)
+- **Foreign Key:** `campaign_id` $\rightarrow$ `campaigns.campaign_id` (`ON DELETE CASCADE`)
+
+| Kolom | Tipe Data | Nullable | Keterangan |
+| :--- | :--- | :---: | :--- |
+| `update_id` | `CHAR(36)` / UUID | Tidak | ID unik kabar perkembangan |
+| `campaign_id` | `CHAR(36)` / UUID | Tidak | Relasi kampanye tujuan |
+| `title` | `VARCHAR(255)` | Tidak | Judul kabar perkembangan |
+| `content` | `TEXT` | Tidak | Isi teks perkembangan penyaluran |
+| `image_path` | `VARCHAR(255)` | Ya | Foto dokumentasi kegiatan |
+| `created_at` | `TIMESTAMP` | Ya | Waktu record dibuat |
+| `updated_at` | `TIMESTAMP` | Ya | Waktu record terakhir diperbarui |
+
+---
+
+### 2.8. Tabel `accounts` (Bagan Akun / Chart of Accounts)
+Menyimpan master data kode akun akuntansi buku besar berpasangan.
+- **Primary Key:** `account_code` (`VARCHAR(20)`)
+
+| Kolom | Tipe Data | Nullable | Keterangan |
+| :--- | :--- | :---: | :--- |
+| `account_code` | `VARCHAR(20)` | Tidak | Kode akun (e.g. `1-1001`, `2-1001`) |
+| `account_name` | `VARCHAR(255)` | Tidak | Nama akun buku besar |
+| `account_type` | `ENUM('asset', 'liability', 'equity', 'revenue', 'expense')` | Tidak | Klasifikasi tipe akun |
+| `normal_balance` | `ENUM('debit', 'credit')` | Tidak | Saldo normal akun |
+| `description` | `TEXT` | Ya | Deskripsi peruntukan akun |
+| `created_at` | `TIMESTAMP` | Ya | Waktu record dibuat |
+| `updated_at` | `TIMESTAMP` | Ya | Waktu record terakhir diperbarui |
+
+---
+
+### 2.9. Tabel `journal_headers`
+Menyimpan header bukti jurnal transaksi umum (General Journal Voucher) berpasangan polimorfik.
+- **Primary Key:** `header_id` (UUID)
+- **Polymorphic Relation:** `source_type` & `source_id` ke `donations` atau `disbursements`.
+
+| Kolom | Tipe Data | Nullable | Keterangan |
+| :--- | :--- | :---: | :--- |
+| `header_id` | `CHAR(36)` / UUID | Tidak | ID unik jurnal voucher |
+| `voucher_number` | `VARCHAR(50)` | Tidak | Nomor referensi unik (`JV-...`) |
+| `transaction_date` | `DATE` | Tidak | Tanggal transaksi finansial |
+| `source_type` | `VARCHAR(255)` | Ya | Class target (App\Models\Donasi / Disbursement) |
+| `source_id` | `CHAR(36)` / UUID | Ya | ID entitas sumber transaksi |
+| `description` | `TEXT` | Tidak | Uraian / memo jurnal |
+| `created_at` | `TIMESTAMP` | Ya | Waktu record dibuat |
+| `updated_at` | `TIMESTAMP` | Ya | Waktu record terakhir diperbarui |
+
+---
+
+### 2.10. Tabel `journal_entries`
+Menyimpan rincian baris debit dan kredit yang saling seimbang (*balanced double-entry*) untuk setiap header voucher.
+- **Primary Key:** `entry_id` (UUID)
+- **Foreign Keys:**
+  - `header_id` $\rightarrow$ `journal_headers.header_id` (`ON DELETE CASCADE`)
+  - `account_code` $\rightarrow$ `accounts.account_code` (`ON DELETE RESTRICT`)
+
+| Kolom | Tipe Data | Nullable | Keterangan |
+| :--- | :--- | :---: | :--- |
+| `entry_id` | `CHAR(36)` / UUID | Tidak | ID unik entri baris |
+| `header_id` | `CHAR(36)` / UUID | Tidak | Relasi ke header voucher |
+| `account_code` | `VARCHAR(20)` | Tidak | Kode akun yang didebit/dikredit |
+| `debit` | `BIGINT UNSIGNED` | Tidak | Nilai debet (Default: `0`) |
+| `credit` | `BIGINT UNSIGNED` | Tidak | Nilai kredit (Default: `0`) |
+| `memo` | `VARCHAR(255)` | Ya | Catatan khusus baris jurnal |
 | `created_at` | `TIMESTAMP` | Ya | Waktu record dibuat |
 | `updated_at` | `TIMESTAMP` | Ya | Waktu record terakhir diperbarui |
 

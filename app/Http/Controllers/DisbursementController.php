@@ -66,7 +66,7 @@ class DisbursementController extends Controller
             $receiptPath = $request->file('receipt_path')->store('disbursements', 'public');
         }
 
-        Disbursement::create([
+        $disbursement = Disbursement::create([
             'campaign_id' => $campaign->campaign_id,
             'user_id' => Auth::user()->user_id,
             'amount' => $validated['amount'],
@@ -77,6 +77,9 @@ class DisbursementController extends Controller
             'receipt_path' => $receiptPath,
             'status' => 'completed',
         ]);
+
+        // Otomatis catat jurnal pengeluaran kas pencairan dana
+        \App\Services\AccountingService::recordDisbursement($disbursement);
 
         return redirect()->route('disbursements.index')->with('success', 'Pencairan dana berhasil dicatat!');
     }

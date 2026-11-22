@@ -172,6 +172,12 @@ class TransaksiController extends Controller
 
         $transaction->save();
         $donation->save();
+
+        // Otomatis catat jurnal buku besar jika donasi berhasil (completed)
+        if ($donation->status === 'completed') {
+            \App\Services\AccountingService::recordDonation($donation);
+        }
+
         $campaign = Campaign::find($donation->campaign_id);
 
         if ($campaign) {

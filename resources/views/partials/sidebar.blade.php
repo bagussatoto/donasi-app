@@ -48,6 +48,12 @@
                     </a>
                 </li>                
                 <li class="sidebar-item">
+                    <a class="sidebar-link {{ request()->is('admin/journals*') ? 'active' : '' }}" href="{{ url('admin/journals') }}" aria-expanded="false">
+                        <iconify-icon icon="solar:document-text-linear"></iconify-icon>
+                        <span class="hide-menu">Jurnal Keuangan</span>
+                    </a>
+                </li>                
+                <li class="sidebar-item">
                     <a class="sidebar-link {{ request()->is('admin/userman') ? 'active' : '' }}" href="{{ url('/admin/userman') }}" aria-expanded="false">
                         <iconify-icon icon="solar:user-id-linear"></iconify-icon>
                         <span class="hide-menu">User Manager</span>
