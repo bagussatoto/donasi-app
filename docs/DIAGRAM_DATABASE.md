@@ -343,3 +343,19 @@ Menyimpan rincian baris debit dan kredit yang saling seimbang (*balanced double-
 2. **`password_reset_tokens`**: Menyimpan token reset kata sandi pengguna.
 3. **`cache` & `cache_locks`**: Menyimpan data cache sistem saat menggunakan database cache driver.
 4. **`jobs`, `job_batches`, `failed_jobs`**: Mengelola antrean asynchronous (queue worker) untuk pengiriman email atau proses background.
+
+---
+
+## 4. Trigger Validasi Basis Data (Database-Level Constraints)
+
+Untuk menjamin integritas data secara mutlak bahkan jika terjadi manipulasi data manual di luar aplikasi Laravel (misal via phpMyAdmin/DBeaver), sistem dilengkapi dengan 4 trigger validasi MySQL:
+
+1. **`trg_check_journal_entry_parity_insert` & `trg_check_journal_entry_parity_update`**:
+   - **Tabel:** `journal_entries` (`BEFORE INSERT`, `BEFORE UPDATE`)
+   - **Fungsi:** Memastikan setiap baris entri jurnal bernilai tunggal (hanya Debit saja ATAU Kredit saja). Menolak jika kedua kolom bernilai `> 0` atau keduanya bernilai `0`.
+2. **`trg_check_disbursement_limit`**:
+   - **Tabel:** `disbursements` (`BEFORE INSERT`)
+   - **Fungsi:** Menghitung sisa saldo kampanye (`collected_amount - total_disbursements_completed`). Menolak transaksi pencairan jika nominal pengajuan melebihi saldo yang tersedia.
+3. **`trg_check_donation_campaign_active`**:
+   - **Tabel:** `donations` (`BEFORE INSERT`)
+   - **Fungsi:** Memeriksa status kampanye target (`status = 1`) dan tanggal kadaluarsa (`end_date >= CURDATE()`). Menolak penerimaan donasi baru untuk kampanye nonaktif atau yang telah lewat tenggat waktu.
