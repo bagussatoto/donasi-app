@@ -41,6 +41,29 @@
                 <p> {{ $campaign->description }} </p>
             </div>
 
+            {{-- Bagian Kabar Terbaru / Campaign Updates --}}
+            @if ($campaign->updates && $campaign->updates->count() > 0)
+                <div class="mt-8 bg-slate-50 p-4 lg:p-6 rounded-2xl shadow-sm">
+                    <h1 class="font-bold text-lg mb-4 text-sky-950 flex items-center gap-2">
+                        <i class="fa-solid fa-bullhorn text-primaryy"></i> Kabar Terbaru & Perkembangan
+                    </h1>
+                    <div class="space-y-6">
+                        @foreach ($campaign->updates as $update)
+                            <div class="border-l-4 border-primaryy pl-4 py-1">
+                                <div class="flex justify-between items-center">
+                                    <h2 class="font-semibold text-md text-gray-800">{{ $update->title }}</h2>
+                                    <span class="text-xs text-gray-400">{{ $update->created_at->format('d M Y') }}</span>
+                                </div>
+                                <p class="text-sm text-gray-600 mt-2 leading-relaxed">{{ $update->content }}</p>
+                                @if ($update->image_path)
+                                    <img src="{{ asset('storage/' . $update->image_path) }}" alt="Foto Update" class="rounded-xl mt-3 max-h-60 object-cover shadow-sm">
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
         </div>
         <div class="hidden lg:block rounded-3xl bg-slate-50 w-full lg:w-4/12 p-4 shadow-lg">
             <h1 class="font-semibold text-center text-lg"> Rincian Penggalangan Dana</h1>

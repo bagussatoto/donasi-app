@@ -69,6 +69,78 @@
                         @endforelse
                     </div>
                 </div>
+                <div class="row mt-4">
+                    <!-- Bagian Kabar Terbaru / Campaign Updates -->
+                    <div class="col-lg-7">
+                        <div class="card border shadow-sm">
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                                <h5 class="fw-bold mb-0 text-primary"><i class="fas fa-bullhorn me-2"></i>Kabar Terbaru & Perkembangan</h5>
+                                <button type="button" class="btn btn-sm btn-primary rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#addUpdateModal">
+                                    <i class="fas fa-plus me-1"></i> Tambah Kabar
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                @forelse ($campaign->updates as $update)
+                                    <div class="border-bottom pb-3 mb-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <h6 class="fw-bold mb-0 text-dark">{{ $update->title }}</h6>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <small class="text-muted"><i class="fas fa-calendar-alt me-1"></i>{{ $update->created_at->format('d M Y, H:i') }}</small>
+                                                <form action="{{ route('campaigns.updates.destroy', $update->update_id) }}" method="POST" onsubmit="return confirm('Hapus kabar terbaru ini?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-1" title="Hapus"><i class="fas fa-times"></i></button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <p class="mb-2 text-secondary">{{ $update->content }}</p>
+                                        @if ($update->image_path)
+                                            <a href="{{ asset('storage/' . $update->image_path) }}" data-lightbox="update-gallery">
+                                                <img src="{{ asset('storage/' . $update->image_path) }}" alt="Foto Update" class="img-thumbnail rounded" style="max-height: 140px;">
+                                            </a>
+                                        @endif
+                                    </div>
+                                @empty
+                                    <p class="text-muted text-center py-3 mb-0">Belum ada kabar terbaru yang dipublikasikan untuk kampanye ini.</p>
+                                @endforelse
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal Tambah Kabar Terbaru -->
+                <div class="modal fade" id="addUpdateModal" tabindex="-1" aria-labelledby="addUpdateModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form action="{{ route('campaigns.updates.store', $campaign->campaign_id) }}" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                <div class="modal-header">
+                                    <h5 class="modal-title fw-bold" id="addUpdateModalLabel">Tambah Kabar Terbaru</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label for="title" class="form-label fw-semibold">Judul Kabar <span class="text-danger">*</span></label>
+                                        <input type="text" name="title" id="title" class="form-control" placeholder="Contoh: Operasi Tahap 1 Selesai Dijalankan" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="content" class="form-label fw-semibold">Rincian Perkembangan <span class="text-danger">*</span></label>
+                                        <textarea name="content" id="content" rows="4" class="form-control" placeholder="Tuliskan kondisi terbaru penerima manfaat..." required></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="image_path" class="form-label fw-semibold">Foto Dokumentasi (Opsional)</label>
+                                        <input type="file" name="image_path" id="image_path" class="form-control" accept="image/jpeg,image/png,image/jpg">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                    <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane me-1"></i> Publikasikan</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="form-group mt-3">
                     <a href="{{ route('campaigns.index') }}" class="btn btn-warning">Kembali</a>
                 </div>
