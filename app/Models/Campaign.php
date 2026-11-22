@@ -77,6 +77,14 @@ class Campaign extends Model
     }
 
     /**
+     * Relasi One-to-Many: Campaigns ke Campaign Updates (Kabar Terbaru).
+     */
+    public function updates()
+    {
+        return $this->hasMany(CampaignUpdate::class, 'campaign_id', 'campaign_id')->orderBy('created_at', 'desc');
+    }
+
+    /**
      * Relasi One-to-Many: Campaigns ke Disbursements (Pencairan Dana).
      */
     public function disbursements()

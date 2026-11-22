@@ -61,7 +61,7 @@ class CampaignController extends Controller
      */
     public function show(string $id)
     {
-        $campaign = Campaign::with('category')
+        $campaign = Campaign::with(['category', 'updates'])
             ->withTotalDonations()
             ->where('campaign_id', $id)
             ->firstOrFail()

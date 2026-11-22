@@ -44,7 +44,7 @@ class DonasiController extends Controller
 
     public function DetailDonasi($slug)
     {
-        $campaign = Campaign::withTotalDonations()->where('slug', $slug)->firstOrFail();
+        $campaign = Campaign::with(['updates'])->withTotalDonations()->where('slug', $slug)->firstOrFail();
         $campaign->decorate();
 
         $donatur = $campaign->donatur = Donasi::where('campaign_id', $campaign->campaign_id)

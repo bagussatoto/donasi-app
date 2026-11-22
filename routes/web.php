@@ -26,6 +26,8 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::resource('userman', UsermanController::class);
     Route::resource('categories', CategoryController::class);
     Route::resource('campaigns', CampaignController::class);
+    Route::post('campaigns/{campaign}/updates', [\App\Http\Controllers\CampaignUpdateController::class, 'store'])->name('campaigns.updates.store');
+    Route::delete('campaigns/updates/{update}', [\App\Http\Controllers\CampaignUpdateController::class, 'destroy'])->name('campaigns.updates.destroy');
     Route::resource('disbursements', \App\Http\Controllers\DisbursementController::class);
     Route::get('dashboard', [DashboardController::class, 'index']);
     Route::get('statistics', [DashboardController::class, 'campaignStats']);
