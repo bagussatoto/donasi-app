@@ -12,6 +12,8 @@ use App\Http\Controllers\UsermanController;
 Route::get('/', [DonasiController::class, 'index']);
 Route::get('/selengkapnya', [DonasiController::class, 'Selengkapnya']);
 Route::get('/tentang-kami', [DonasiController::class, 'TentangKami']);
+Route::get('/syarat-ketentuan', fn () => view('Pages.SyaratKetentuan'));
+Route::get('/kebijakan-privasi', fn () => view('Pages.KebijakanPrivasi'));
 Route::get('/category/{id}', [DonasiController::class, 'CategoryDonasi']);
 Route::get('/profile', [DonasiController::class, 'ProfileDonasi'])->middleware('auth');
 

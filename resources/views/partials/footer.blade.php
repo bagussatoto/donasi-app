@@ -24,6 +24,12 @@
                     <li class="mb-2">
                         <a href="/tentang-kami" class="hover:text-white transition duration-200">Tentang Kami</a>
                     </li>
+                    <li class="mb-2">
+                        <a href="/syarat-ketentuan" class="hover:text-white transition duration-200">Syarat & Ketentuan</a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="/kebijakan-privasi" class="hover:text-white transition duration-200">Kebijakan Privasi</a>
+                    </li>
                 </ul>
             </div>
             <div class="w-full lg:w-40 px-4 lg:block hidden">
