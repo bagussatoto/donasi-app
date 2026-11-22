@@ -65,6 +65,7 @@ Platform ini dirancang untuk menyelesaikan kebutuhan inti dalam ekosistem filant
 - **Kabar Terbaru Kampanye (Updates)**: Admin dapat menambahkan berita perkembangan kondisi penerima manfaat dan foto bukti dari halaman detail kampanye.
 - **Modul Pencairan Dana (Disbursements)**: Mencatat pengajuan dan penyaluran dana ke rekening bank penerima manfaat, validasi otomatis batas saldo tersedia (`available_balance`), serta upload bukti resi transfer (`/admin/disbursements`).
 - **Sistem Pembukuan Berpasangan (Double-Entry Accounting Ledger)**: Pencatatan jurnal otomatis saat donasi masuk (Debit Kas Penampung, Kredit Dana Donasi Terikat) dan pencairan dana (Debit Dana Donasi Terikat, Kredit Kas Penampung) dengan relasi polimorfik ke `donations` dan `disbursements` (`/admin/journals`).
+- **Laporan Neraca Saldo (Trial Balance)**: Rekapitulasi mutasi debit/kredit dan saldo akhir seluruh akun buku besar, deteksi otomatis status keseimbangan (*balanced*), serta filter periode pelaporan (`/admin/trial-balance`).
 - **Manajemen Pengguna**: Pencarian, paginasi data pengguna, dan proteksi agar akun bertipe `admin` tidak dapat dihapus (`/admin/userman`).
 
 ---

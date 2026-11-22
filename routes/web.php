@@ -32,6 +32,7 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     Route::delete('campaigns/updates/{update}', [\App\Http\Controllers\CampaignUpdateController::class, 'destroy'])->name('campaigns.updates.destroy');
     Route::resource('disbursements', \App\Http\Controllers\DisbursementController::class);
     Route::get('journals', [\App\Http\Controllers\JournalController::class, 'index'])->name('journals.index');
+    Route::get('trial-balance', [\App\Http\Controllers\JournalController::class, 'trialBalance'])->name('journals.trial_balance');
     Route::get('dashboard', [DashboardController::class, 'index']);
     Route::get('statistics', [DashboardController::class, 'campaignStats']);
 });

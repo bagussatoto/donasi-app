@@ -54,6 +54,12 @@
                     </a>
                 </li>                
                 <li class="sidebar-item">
+                    <a class="sidebar-link {{ request()->is('admin/trial-balance*') ? 'active' : '' }}" href="{{ url('admin/trial-balance') }}" aria-expanded="false">
+                        <iconify-icon icon="solar:chart-square-linear"></iconify-icon>
+                        <span class="hide-menu">Neraca Saldo</span>
+                    </a>
+                </li>                
+                <li class="sidebar-item">
                     <a class="sidebar-link {{ request()->is('admin/userman') ? 'active' : '' }}" href="{{ url('/admin/userman') }}" aria-expanded="false">
                         <iconify-icon icon="solar:user-id-linear"></iconify-icon>
                         <span class="hide-menu">User Manager</span>

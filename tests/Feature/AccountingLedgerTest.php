@@ -145,4 +145,48 @@ class AccountingLedgerTest extends TestCase
         $response->assertSee('Jurnal Keuangan Umum');
         $response->assertSee('Bagan Akun Standar');
     }
+
+    public function test_admin_can_access_trial_balance_and_verify_balance(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        // Simulasi donasi masuk
+        $campaign = Campaign::create([
+            'title' => 'Bantuan Pendidikan Anak Yatim',
+            'category_id' => 1,
+            'target_amount' => 5000000,
+            'collected_amount' => 1000000,
+            'description' => 'Program pendidikan',
+            'end_date' => now()->addDays(30),
+            'status' => true,
+        ]);
+
+        $donation = Donasi::create([
+            'campaign_id' => $campaign->campaign_id,
+            'amount' => 1000000,
+            'status' => 'completed',
+            'show_name' => true,
+        ]);
+        AccountingService::recordDonation($donation);
+
+        // Simulasi pencairan dana sebagian
+        $disbursement = Disbursement::create([
+            'campaign_id' => $campaign->campaign_id,
+            'user_id' => $admin->user_id,
+            'amount' => 400000,
+            'bank_name' => 'BRI',
+            'account_number' => '987654321',
+            'account_name' => 'Panti Asuhan',
+            'purpose' => 'Pembelian buku dan seragam',
+            'status' => 'completed',
+        ]);
+        AccountingService::recordDisbursement($disbursement);
+
+        $response = $this->actingAs($admin)->get(route('journals.trial_balance'));
+        $response->assertStatus(200);
+        $response->assertSee('Neraca Saldo (Trial Balance)');
+        $response->assertSee('SEIMBANG (BALANCED)');
+        $response->assertSee('1-1001');
+        $response->assertSee('2-1001');
+    }
 }

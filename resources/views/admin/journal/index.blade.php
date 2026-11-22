@@ -13,6 +13,20 @@
                         </div>
                     </div>
 
+                    <!-- Navigasi Tab Modul Keuangan -->
+                    <ul class="nav nav-pills mb-4 border-bottom pb-2">
+                        <li class="nav-item">
+                            <a class="nav-link active fw-bold" href="{{ route('journals.index') }}">
+                                <i class="ti ti-list me-1"></i> Buku Jurnal Umum
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-muted" href="{{ route('journals.trial_balance') }}">
+                                <i class="ti ti-chart-bar me-1"></i> Neraca Saldo (Trial Balance)
+                            </a>
+                        </li>
+                    </ul>
+
                     <form method="GET" action="{{ route('journals.index') }}" class="row g-2 mb-4 bg-light p-3 rounded">
                         <div class="col-md-3">
                             <label class="form-label small fw-semibold">Tanggal Mulai</label>
