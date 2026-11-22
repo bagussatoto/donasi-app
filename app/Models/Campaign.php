@@ -77,6 +77,30 @@ class Campaign extends Model
     }
 
     /**
+     * Relasi One-to-Many: Campaigns ke Disbursements (Pencairan Dana).
+     */
+    public function disbursements()
+    {
+        return $this->hasMany(Disbursement::class, 'campaign_id', 'campaign_id');
+    }
+
+    /**
+     * Hitung total dana yang sudah dicairkan (status completed).
+     */
+    public function getTotalDisbursedAttribute(): int
+    {
+        return (int) $this->disbursements()->where('status', 'completed')->sum('amount');
+    }
+
+    /**
+     * Hitung sisa saldo yang masih tersedia untuk dicairkan.
+     */
+    public function getAvailableBalanceAttribute(): int
+    {
+        return max(0, (int) $this->collected_amount - $this->total_disbursed);
+    }
+
+    /**
      * Relasi One-to-Many: Campaigns ke Donations.
      */
     public function donations()

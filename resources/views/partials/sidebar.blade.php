@@ -42,6 +42,12 @@
                     </a>
                 </li>                
                 <li class="sidebar-item">
+                    <a class="sidebar-link {{ request()->is('admin/disbursements*') ? 'active' : '' }}" href="{{ url('admin/disbursements') }}" aria-expanded="false">
+                        <iconify-icon icon="solar:hand-money-linear"></iconify-icon>
+                        <span class="hide-menu">Pencairan Dana</span>
+                    </a>
+                </li>                
+                <li class="sidebar-item">
                     <a class="sidebar-link {{ request()->is('admin/userman') ? 'active' : '' }}" href="{{ url('/admin/userman') }}" aria-expanded="false">
                         <iconify-icon icon="solar:user-id-linear"></iconify-icon>
                         <span class="hide-menu">User Manager</span>
