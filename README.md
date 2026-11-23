@@ -201,6 +201,7 @@ MIDTRANS_CALLBACK_URL=https://your-public-domain/donasi/payment/callback
 Seluruh dokumentasi teknis, perancangan, hukum, dan tata kelola platform tersedia di direktori [`docs/`](./docs):
 
 - 🏛️ [**Cetak Biru Arsitektur Sistem (Master Blueprint)**](./docs/BLUEPRINT_ARSITEKTUR_SISTEM.md): Cetak biru menyeluruh yang memuat arsitektur C4 (Context, Container, Component), multi-tier layering, pipeline transaksi, validasi ganda, dan topologi deployment.
+- 🏗️ [**Roadmap Arsitektur Modular Monolith**](./docs/ROADMAP_MODULAR_MONOLITH.md): Panduan evolusi batas domain (*Bounded Contexts*), desain modul vertikal, komunikasi *event-driven*, dan tahapan transisi menuju skalabilitas enterprise.
 - 📘 [**Alur Proyek & Arsitektur Lengkap**](./docs/ALUR_PROYEK.md): Menjelaskan arsitektur detail sistem, pipeline middleware, alur webhook, dan peta rute.
 - 🗄️ [**Bagan Diagram Database (ERD)**](./docs/DIAGRAM_DATABASE.md): Diagram ERD Mermaid dan kamus data (*Data Dictionary*) seluruh tabel database.
 - 📐 [**Use Case Diagram & Skenario UML**](./docs/USE_CASE_DIAGRAM_DAN_SKENARIO.md): Diagram use case UML, identifikasi 4 aktor, matriks hak akses, dan narasi skenario use case.

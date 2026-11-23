@@ -351,6 +351,7 @@ Cetak biru ini terhubung secara terpadu dengan dokumen spesifikasi teknis lainny
 
 | Dokumen Terkait | Path Berkas | Fokus Bahasan |
 | :--- | :--- | :--- |
+| **Roadmap Modular Monolith** | [ROADMAP_MODULAR_MONOLITH.md](file:///d:/Project/donasi/docs/ROADMAP_MODULAR_MONOLITH.md) | Panduan evolusi domain vertikal, DDD bounded contexts, dan transisi modular enterprise. |
 | **Alur & Siklus Proyek** | [ALUR_PROYEK.md](file:///d:/Project/donasi/docs/ALUR_PROYEK.md) | Tahapan pengembangan proyek dari fase inisiasi hingga rilis. |
 | **Diagram Basis Data** | [DIAGRAM_DATABASE.md](file:///d:/Project/donasi/docs/DIAGRAM_DATABASE.md) | ERD Mermaid lengkap dan kamus data 17 tabel. |
 | **Pedoman Jurnal Keuangan** | [PEDOMAN_JURNAL_KEUANGAN_DONASI.md](file:///d:/Project/donasi/docs/PEDOMAN_JURNAL_KEUANGAN_DONASI.md) | Standar PSAK 109 dan matriks debit/kredit filantropi. |
